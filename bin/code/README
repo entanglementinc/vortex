@@ -1,0 +1,9 @@
+The 'our' directory contains our implementation and the 'ref' directory, the reference ones.
+
+There are some scripts here. First run './build' to get all the executables. You can then run './bench' for benchmarks, './makeHashes' for hash samples or './makeIntermediate' for intermediate values.
+
+The intermediate values are stored into the 'intermediates' file. The hash samples are the hashes of 0-filled strings which can been used for testing. They are found in the 'zeroHashes' file.
+
+When you are done, you can safely run './mrclean'.
+
+Sorry, no Makefile was done here, due to the structure (with symlinks).

@@ -1,0 +1,10 @@
+int generate()
+{
+  int p=17;
+  int q=6;
+  int private_key[5]={1,2,3,4,5};
+  int c = (pow(p, private_key[0]))*(pow(q, private_key[1]));
+  int d = (pow(p, private_key[2]))*(pow(q, private_key[3]));
+  int h = pow(p, private_key[4]);
+  std::vector<int> public_key={c, d, h};
+}

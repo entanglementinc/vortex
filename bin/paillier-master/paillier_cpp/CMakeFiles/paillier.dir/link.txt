@@ -1,0 +1,2 @@
+/usr/bin/ar qc libpaillier.a  CMakeFiles/paillier.dir/bn.o CMakeFiles/paillier.dir/common.o CMakeFiles/paillier.dir/paillier.o
+/usr/bin/ranlib libpaillier.a

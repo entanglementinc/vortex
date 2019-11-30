@@ -1,0 +1,6 @@
+/usr/local/lib/libpaillier.a
+/usr/local/include/bn.h
+/usr/local/include/common.h
+/usr/local/include/macro.h
+/usr/local/include/paillier.h
+/usr/local/include/typedef.h

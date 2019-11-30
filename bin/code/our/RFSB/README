@@ -1,0 +1,33 @@
+=== Version selection ===
+
+There are three versions of the code:
+ * optimized (default)
+ * plain
+ * intermediate
+
+The first one is the fastest of them. The 'rfsb.c' and 'genmatrix.c' files in the current repository are copies of the optimized versions. The second one is intended to help comprehension of the algorithm. The 
+last one prints the intermediate states.
+
+=== Compiling ===
+
+Just run:
+
+$ make
+
+
+=== Executing ===
+
+For hashing a file:
+
+$ ./rfsb file
+
+or, for hashing from stdin:
+
+$ ./rfsb
+
+
+=== Plain sources ===
+
+The files in the 'plain' repertory are simplified and non architecture optimized versions of sfsb.c and genmatrix.c. More explanations in the comments. There is also what you need to compile:
+
+$ make

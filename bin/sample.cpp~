@@ -1,0 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+int main(int argc,  char**argv)
+{
+  printf("ENCRYPTING: %s\nCIPHERTEXT:%i\n", argv[1], sqrt(atoi(argv[1])% argv[2]));
+}

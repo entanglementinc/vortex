@@ -1,0 +1,7 @@
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/install/strip.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/install/local.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/paillier.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/rebuild_cache.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/edit_cache.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/install.dir
+/root/ISIA/920/VORTEX/paillier-master/paillier_cpp/CMakeFiles/list_install_components.dir

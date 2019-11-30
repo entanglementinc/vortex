@@ -1,0 +1,109 @@
+## #############################################################
+## BASH Script for checking random crypto messages
+## 
+## Requires:
+##  possibility to run 
+##        java Crypter
+## Usage:
+##        bash check_random_message MESSAGE_LENGTH N_BITS
+## Output:
+##        prints verbose output to stderr
+##        prints operational messages to stdout
+##        returns with error code != 0, iff en/de-cryption or comparison fails.
+## -------------------------------------------------------------
+## $Id : $
+## -------------------------------------------------------------
+
+export MESSAGE_LENGTH=$1;
+export N_BITS=$2;
+
+if [ -z "$2" ]; then
+   echo "ERROR: need two arguments: MESSAGE_LENGTH, N_BITS_PER_BITE.";
+   exit 1;
+fi;
+
+# $1 : n
+# $2 : filename
+# $3 : (optional) minimal value [only if $4 is set, too]
+# $4 : (optional) maximal value
+function n_random_chars_to_file {
+  local MAXIMAL;
+  local MINIMAL;
+  local I;
+  local COUNT ;
+  local LIM ;
+  local K ;
+  local L ;
+  
+  if [ -z "$4" ]; then
+    MINIMAL=0x00 ;
+    MAXIMAL=0xFF ;
+  else
+    MINIMAL=$3 ;
+    MAXIMAL=$4 ;
+  fi;
+
+  if [ -z "$2" ]; then
+    echo "** ERROR: n_random_chars_to_file: need second argument." ;
+    exit 2;
+  fi;
+  if [ -e "$2" ]; then
+    echo "** ERROR: target file \"$2\" does already exist - refuse to overwrite."
+    exit 3;
+  fi;
+  
+  if [ ${MINIMAL} -eq 0x00 ] && [ ${MAXIMAL} -eq 0xFF ] &&  [ -e /dev/random ]; then
+    head -c $1 /dev/random > $2 ;	    
+  else
+    ## only use pseudo-random chars
+  
+    export LIM=65003 ; # a prime number
+    export K=7;
+    export L=13;
+    export I=$((`date +"%s"` % ${LIM})); # seed depending on time of day
+    export COUNT=0;
+
+    while [ ${COUNT} -lt ${1} ]; do
+      export I=$((($K+${I}*${L}) % ${LIM}));
+      #echo $(printf %02x $((${MINIMAL}+ (${I} % (${MAXIMAL}-${MINIMAL} + 1)))))
+      printf "\x$(printf %02x $((${MINIMAL} + (${I} % (${MAXIMAL}-${MINIMAL} + 1)))) )" >> $2;
+      export COUNT=$(($COUNT+1));
+    done;
+  fi;
+}
+
+
+rm -f message.txt message.enc message.dec;
+if [ ${N_BITS} -gt 8 ]; then
+  n_random_chars_to_file $((2 * ${MESSAGE_LENGTH})) message.txt ;
+else
+  if [ ${N_BITS} -eq 8 ]; then
+    n_random_chars_to_file ${MESSAGE_LENGTH} message.txt ;
+  else
+    # restrict to some ASCII chars ;
+    n_random_chars_to_file ${MESSAGE_LENGTH} message.txt 0x20 0x7F ;
+  fi;
+fi;
+
+sync ;
+echo "java Crypter e -${N_BITS} message.txt message.enc " ;
+if ! java Crypter e -${N_BITS} message.txt message.enc; then
+   echo "ERROR: java Crypter e message.txt message.enc FAILED.";
+   exit 4;
+fi; 
+
+sync ;
+echo "java Crypter d -${N_BITS} message.enc message.dec " ;
+if ! java Crypter d -${N_BITS} message.enc message.dec; then
+   echo "ERROR: java Crypter d message.enc message.dec FAILED" ;
+   exit 5;
+fi; 
+
+sync ;
+if ! cmp message.txt message.dec ; then
+   echo "ERROR: Files differ: message.txt message.dec " ;
+   ls -l message.* ;
+   exit 6;
+fi; 
+
+echo "(${MESSAGE_LENGTH},${N_BITS}): ok.";

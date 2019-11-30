@@ -1,0 +1,90 @@
+#!/bin/bash
+function gen_make()
+{
+	funName=$1
+	intermediate=$2
+	
+	lowName=$(echo $funName | tr [A-Z] [a-z])
+	bin="../../bin/$lowName"
+	int="../../int/$lowName"
+	
+	echo "$funName..."
+	cd $funName
+	if [ ! -z $intermediate ]
+	then
+		if [ ! -e $bin ]; then ln -fs optimized/*    . && make clean && make && cp $lowName $bin; fi
+		if [ ! -e $int ]; then ln -fs intermediate/* . && make clean && make && cp $lowName $int; fi
+	else
+		if [ ! -e $bin ]; then make && cp $lowName $bin; fi
+	fi
+	cd ..
+}
+function gen_configure()
+{
+	funName=$1
+	keylen=$2
+	intermediate=$3
+	
+	lowName=$(echo $funName | tr [A-Z] [a-z])
+	bin="../../bin/$lowName$keylen"
+	int="../../int/$lowName$keylen"
+	
+	echo "$funName-$keylen..."
+	if [ ! -z $intermediate ]
+	then
+		if [ ! -e $bin ]; then ln -fs optimized/*    . && ./configure $keylen && make && cp $lowName $bin; fi
+		if [ ! -e $int ]; then ln -fs intermediate/* . && ./configure $keylen && make && cp $lowName $int; fi
+	else
+		if [ ! -e $bin ]; then ./configure $keylen && make && cp $lowName $bin; fi
+	fi
+}
+function just_make()
+{
+	funName=$1
+	lowName=$(echo $funName | tr [A-Z] [a-z])
+	cd $funName; if [ ! -e $lowName ]; then make; fi; cd ..
+}
+(
+if [ ! -e bin ]; then mkdir bin; fi
+if [ ! -e int ]; then mkdir int; fi
+cd our;
+echo "Buildind ours..."
+cd FSB
+gen_configure FSB 160 "yes"
+gen_configure FSB 224 "yes"
+gen_configure FSB 256 "yes"
+gen_configure FSB 384 "yes"
+gen_configure FSB 512 "yes"
+cd ..
+cd SFSB
+gen_configure SFSB 160 "yes"
+gen_configure SFSB 224 "yes"
+gen_configure SFSB 384 "yes"
+cd ..
+gen_make RFSB "yes"
+cd SYND
+gen_configure SYND 64
+gen_configure SYND 96
+gen_configure SYND 128
+gen_configure SYND 192
+gen_configure SYND 256
+gen_configure SYND 512
+cd ..
+cd 2SC
+gen_configure 2SC 144
+gen_configure 2SC 208
+gen_configure 2SC 352
+cd ..
+gen_make XSYND
+cd ..
+
+cd ref
+echo "Building references..."
+just_make FSB
+just_make SFSB
+just_make RFSB
+just_make SYND
+just_make 2SC
+cd ..
+) >&2
+

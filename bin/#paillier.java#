@@ -1,0 +1,41 @@
+/**
+ * generate
+ * generate a private key for the Paillier cryptosystem where the
+ * primes have bitLength bits
+ * @param bitLength
+ * @return
+ */
+public static PaillierPrivateKey generate(int bitLength)
+{
+    BigInteger p = new SafePrime(bitLength);
+    BigInteger q = new SafePrime(bitLength);
+    return generate( p, q );
+}
+public static PaillierPrivateKey generate(BigInteger p, BigInteger q)
+{
+    BigInteger n = p.multiply(q);
+    BigInteger m = p.subtract(BigInteger.ONE).divide(BigInteger.valueOf(2))
+                    .multiply( q.subtract(BigInteger.ONE).divide(BigInteger.valueOf(2)));
+    BigInteger d = m.modInverse(n).multiply(m).mod(n.multiply(n));
+    return new PaillierPrivateKey( n, d );
+}public BigInteger encrypt(BigInteger plaintext)
+{
+    BigInteger rand = new RandomInvertibleBigInteger( getProduct() );
+    return encrypt(plaintext, rand);
+}
+
+public BigInteger encrypt(BigInteger plaintext, BigInteger rand)
+{
+    BigInteger gm = getGenerator().modPow(plaintext,getModulus());
+    BigInteger rns = rand.modPow(getProduct(), getModulus());
+    BigInteger gmrns = gm.multiply(rns);
+    BigInteger ciphertext = gmrns.mod(getModulus());
+    return ciphertext;
+}
+public BigInteger decrypt( BigInteger ciphertext )
+{
+    return ciphertext.modPow(   getPrivateExponent(),
+                                getModulus() )
+                            .subtract(BigInteger.ONE)
+                            .divide(getProduct());
+}
