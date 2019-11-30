@@ -1,3 +1,0 @@
-usage: fsb [-s size] [file...]
-"size" is one of 48, 160, 224, 256, 384, 512. The default is 224.
-"file..." file or files to digest. If no files are specified then standard input is used.

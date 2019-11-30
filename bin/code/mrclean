@@ -1,9 +1,0 @@
-#!/bin/bash
-for i in $(find -name Makefile)
-do
-	rep=$(dirname $i)
-	cd $rep
-	make clean > /dev/null
-	cd - > /dev/null
-done
-rm -Rf $(find -name tmp) bin int refZeroHashes tmp tmpkey our/pi.o
